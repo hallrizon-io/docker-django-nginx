@@ -3,14 +3,8 @@ import ast
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-"""
-From docker
-SECRET_KEY = os.getenv('MYSITE_SECRET_KEY', '')
+SECRET_KEY = os.getenv('MYSITE_SECRET_KEY', 'test_secret_key')
 DEBUG = ast.literal_eval(os.getenv('DEBUG', 'True'))
-"""
-
-SECRET_KEY = "gazgolder"
-DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -58,16 +52,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'main.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
-        'PORT': 5432
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'postgres',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': '127.0.0.1',
+            'PORT': 5432
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'postgres',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': 'db_main',
+            'PORT': 5432
+        }
+    }
 
 AUTH_USER_MODEL: str = 'users.Profile'
 
@@ -109,3 +115,9 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+if DEBUG:
+    STATIC_ROOT = 'static/'
+else:
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, "static")
+    ]

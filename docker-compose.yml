@@ -1,20 +1,31 @@
-version: "3"
+version: "2.2"
 
 services:
+  db_main:
+    image: postgres:9.4
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+
   app:
     build: .
-    container_name: django-gunicorn
+    #container_name: django-gunicorn
     restart: always
     env_file:
-      - django.env.example
+      - django.env
     ports:
       - "8000:8000"
     command:
-      "gunicorn --workers=4 --bind=0.0.0.0:8000 main.wsgi:application"
+      "gunicorn --workers=2 --bind=0.0.0.0:8000 main.wsgi:application"
+    depends_on:
+      - db_main
 
   nginx:
     image: nginx:1.17
-    container_name: ngx
+    #container_name: ngx
     ports:
       - "80:80"
     volumes:
